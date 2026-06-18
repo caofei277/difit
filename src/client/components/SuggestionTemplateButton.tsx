@@ -1,6 +1,7 @@
 import { Code } from 'lucide-react';
 import React from 'react';
 
+import { useT } from '../i18n';
 import { createSuggestionTemplate } from '../../utils/suggestionUtils';
 
 interface SuggestionTemplateButtonProps {
@@ -21,6 +22,8 @@ export function SuggestionTemplateButton({
   textareaRef,
   className = DEFAULT_CLASSNAME,
 }: SuggestionTemplateButtonProps) {
+  const t = useT();
+
   if (!selectedCode) return null;
 
   const handleAddSuggestion = () => {
@@ -57,10 +60,10 @@ export function SuggestionTemplateButton({
       type="button"
       onClick={handleAddSuggestion}
       className={className}
-      title="Add code suggestion"
+      title={t('suggestionTemplate.addCodeSuggestion')}
     >
       <Code size={12} />
-      Add suggestion
+      {t('suggestionTemplate.addSuggestion')}
     </button>
   );
 }

@@ -1,27 +1,29 @@
 {
   "name": "difit",
   "version": "5.0.2",
-  "description": "A lightweight command-line tool that spins up a local web server to display Git commit diffs in a GitHub-like Files changed view",
+  "description": "A lightweight command-line tool that spins up a local web server to display Git commit diffs in a GitHub-like Files changed view (with i18n support)",
   "keywords": [
+    "chinese",
     "cli",
     "code-review",
     "diff",
     "diff-viewer",
     "git",
     "github",
+    "i18n",
     "react",
     "review",
     "tailwind"
   ],
-  "homepage": "https://github.com/yoshiko-pg/difit",
+  "homepage": "https://github.com/caofei277/difit",
   "bugs": {
-    "url": "https://github.com/yoshiko-pg/difit/issues"
+    "url": "https://github.com/caofei277/difit/issues"
   },
   "license": "MIT",
-  "author": "yoshiko-pg",
+  "author": "caofei277 (forked from yoshiko-pg)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yoshiko-pg/difit.git"
+    "url": "https://github.com/caofei277/difit.git"
   },
   "bin": {
     "difit": "./dist/cli/index.js"

@@ -13,6 +13,7 @@ import { useState } from 'react';
 
 import type { DiffFile } from '../../types/diff';
 import { copyTextToClipboard } from '../utils/clipboard';
+import { useT } from '../i18n';
 
 interface DiffViewerHeaderProps {
   file: DiffFile;
@@ -47,6 +48,7 @@ export const DiffViewerHeader = ({
   onToggleReviewed,
 }: DiffViewerHeaderProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const t = useT();
 
   return (
     <div className="bg-github-bg-secondary border-t-2 border-t-github-accent border-b border-github-border px-5 py-4 flex items-center justify-between flex-wrap gap-3 sticky top-0 z-10">
@@ -62,9 +64,7 @@ export const DiffViewerHeader = ({
           }}
           className="text-github-text-muted hover:text-github-text-primary transition-colors cursor-pointer"
           title={
-            isCollapsed
-              ? 'Expand file (Alt+Click to expand all)'
-              : 'Collapse file (Alt+Click to collapse all)'
+            isCollapsed ? t('diffViewerHeader.expandFile') : t('diffViewerHeader.collapseFile')
           }
         >
           {isCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
@@ -90,13 +90,13 @@ export const DiffViewerHeader = ({
                 console.error('Failed to copy file path:', err);
               });
           }}
-          title="Copy file path"
+          title={t('diffViewerHeader.copyFilePath')}
         >
           {isCopied ? <Check size={14} /> : <Copy size={14} />}
         </button>
         {file.oldPath && file.oldPath !== file.path && (
           <span className="text-xs text-github-text-muted italic">
-            (renamed from {file.oldPath})
+            {t('diffViewerHeader.renamedFrom', { oldPath: file.oldPath })}
           </span>
         )}
       </div>
@@ -105,10 +105,10 @@ export const DiffViewerHeader = ({
         {isChangedSinceViewed && !isReviewed && (
           <span
             className="inline-flex h-6 items-center rounded-full border border-github-warning px-2.5 text-xs font-medium text-github-warning"
-            title="Updated since you last viewed this file"
-            aria-label="Updated since you last viewed this file"
+            title={t('diffViewerHeader.updatedTooltip')}
+            aria-label={t('diffViewerHeader.updatedTooltip')}
           >
-            Updated
+            {t('diffViewerHeader.updated')}
           </span>
         )}
         <div className="flex items-center gap-2 text-xs">
@@ -126,10 +126,14 @@ export const DiffViewerHeader = ({
               ? 'bg-github-accent text-white'
               : 'dark:bg-slate-600 dark:text-white dark:border-slate-500 dark:hover:bg-slate-500 dark:hover:border-slate-400 bg-github-bg-secondary text-github-text-primary border border-github-border hover:bg-github-bg-tertiary hover:border-github-text-muted'
           }`}
-          title={isReviewed ? 'Mark as not reviewed' : 'Mark as reviewed'}
+          title={
+            isReviewed
+              ? t('diffViewerHeader.markAsNotReviewed')
+              : t('diffViewerHeader.markAsReviewed')
+          }
         >
           {isReviewed ? <Check size={14} /> : <Square size={14} />}
-          Viewed
+          {t('diffViewerHeader.viewed')}
         </button>
       </div>
     </div>

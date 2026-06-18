@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { CommentBodyRenderer, hasSuggestionInBody } from './CommentBodyRenderer';
 import type { AppearanceSettings } from './SettingsModal';
 import { SuggestionTemplateButton } from './SuggestionTemplateButton';
+import { useT } from '../i18n';
 
 interface CommentFormProps {
   onSubmit: (body: string) => Promise<void>;
@@ -37,6 +38,13 @@ export function CommentForm({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasSuggestion = hasSuggestionInBody(body);
   const effectiveMode: CommentFormMode = hasSuggestion ? mode : 'edit';
+  const t = useT();
+
+  const effectiveTitle = title === 'Add a comment' ? t('commentForm.addCommentTitle') : title;
+  const effectiveSubmitLabel =
+    submitLabel === 'Submit' ? t('commentForm.submitLabel') : submitLabel;
+  const effectivePlaceholder =
+    placeholder === 'Leave a comment...' ? t('commentForm.placeholder') : placeholder;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +84,7 @@ export function CommentForm({
     >
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium" style={{ color: 'var(--color-yellow-path-text)' }}>
-          {title}
+          {effectiveTitle}
         </span>
         {hasSuggestion ? (
           <div className="flex items-center border border-github-border rounded-md overflow-hidden">
@@ -89,7 +97,7 @@ export function CommentForm({
                   : 'bg-github-bg-secondary text-github-text-secondary'
               } transition-colors`}
             >
-              Edit
+              {t('commentForm.edit')}
             </button>
             <button
               type="button"
@@ -100,7 +108,7 @@ export function CommentForm({
                   : 'bg-github-bg-secondary text-github-text-secondary'
               } transition-colors`}
             >
-              Preview
+              {t('commentForm.preview')}
             </button>
           </div>
         ) : (
@@ -129,7 +137,7 @@ export function CommentForm({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={effectivePlaceholder}
           rows={Math.max(3, body.split('\n').length)}
           autoFocus
           disabled={isSubmitting}
@@ -143,7 +151,7 @@ export function CommentForm({
           className="text-xs px-3 py-1.5 bg-github-bg-tertiary text-github-text-primary border border-github-border rounded hover:opacity-80 transition-all disabled:opacity-50"
           disabled={isSubmitting}
         >
-          Cancel
+          {t('commentForm.cancel')}
         </button>
         <button
           type="submit"
@@ -163,7 +171,7 @@ export function CommentForm({
           }}
           disabled={!body.trim() || isSubmitting}
         >
-          {isSubmitting ? 'Submitting...' : submitLabel}
+          {isSubmitting ? t('commentForm.submitting') : effectiveSubmitLabel}
         </button>
       </div>
     </form>

@@ -17,6 +17,7 @@ import {
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
+import { useT } from '../i18n';
 import { type RevisionsResponse } from '../../types/diff';
 
 const RESERVED_SPECIAL_OPTION_VALUES = new Set(['merge-base']);
@@ -39,6 +40,7 @@ export function RevisionSelector({
   options,
   disabledValues = EMPTY_DISABLED_VALUES,
 }: RevisionSelectorProps) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, floatingStyles, context } = useFloating({
@@ -80,13 +82,13 @@ export function RevisionSelector({
 
     // Check branches
     const branch = options.branches.find((b) => b.name === value);
-    if (branch) return `${branch.name}${branch.current ? ' (current)' : ''}`;
+    if (branch) return `${branch.name}${branch.current ? t('revisionSelector.currentBranch') : ''}`;
 
     // Check commits
     const commit = options.commits.find((c) => c.shortHash === value || c.hash === value);
     if (commit) return `${commit.shortHash} - ${commit.message}`;
 
-    return value || 'Select...';
+    return value || t('revisionSelector.select');
   };
 
   const handleSelect = (newValue: string) => {
@@ -190,7 +192,7 @@ export function RevisionSelector({
               {visibleSpecialOptions.length > 0 && (
                 <div className="border-b border-github-border">
                   <div className="px-3 py-2 text-xs font-semibold text-github-text-secondary bg-github-bg-tertiary">
-                    Special
+                    {t('revisionSelector.special')}
                   </div>
                   {visibleSpecialOptions.map((opt) => (
                     <button
@@ -209,7 +211,7 @@ export function RevisionSelector({
               {!isWorkingStagedMode && options.commits.length > 0 && (
                 <div className="border-b border-github-border">
                   <div className="px-3 py-2 text-xs font-semibold text-github-text-secondary bg-github-bg-tertiary">
-                    Recent Commits
+                    {t('revisionSelector.recentCommits')}
                   </div>
                   {options.commits.map((commit) => (
                     <button
@@ -238,7 +240,7 @@ export function RevisionSelector({
               {!isWorkingStagedMode && options.branches.length > 0 && (
                 <div>
                   <div className="px-3 py-2 text-xs font-semibold text-github-text-secondary bg-github-bg-tertiary">
-                    Branches
+                    {t('revisionSelector.branches')}
                   </div>
                   {options.branches.map((branch) => (
                     <button
@@ -250,7 +252,9 @@ export function RevisionSelector({
                       <div className="flex items-center gap-2">
                         <span className="text-github-text-primary">{branch.name}</span>
                         {branch.current && (
-                          <span className="text-xs text-github-text-muted">(current)</span>
+                          <span className="text-xs text-github-text-muted">
+                            {t('revisionSelector.current')}
+                          </span>
                         )}
                       </div>
                     </button>

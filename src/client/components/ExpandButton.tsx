@@ -1,5 +1,6 @@
 import { ArrowDownFromLine, ArrowUpFromLine, Loader2, UnfoldVertical } from 'lucide-react';
 import { memo, type ReactElement } from 'react';
+import { useT } from '../i18n';
 
 const DEFAULT_EXPAND_COUNT = 20;
 
@@ -21,11 +22,16 @@ export const ExpandButton = memo(function ExpandButton({
   onExpandAll,
   isLoading = false,
 }: ExpandButtonProps) {
+  const t = useT();
+
   if (hiddenLines <= 0) {
     return null;
   }
 
-  const lineLabel = `${hiddenLines} ${hiddenLines === 1 ? 'line' : 'lines'}`;
+  const lineLabel =
+    hiddenLines === 1
+      ? t('expandButton.line', { n: hiddenLines })
+      : t('expandButton.lines', { n: hiddenLines });
   const showOnlyExpandAll = hiddenLines <= DEFAULT_EXPAND_COUNT;
   const gridClass = 'grid-cols-[var(--line-number-width)_1fr]';
   const iconButtonClass =
@@ -42,7 +48,7 @@ export const ExpandButton = memo(function ExpandButton({
     actions.push({
       key: 'all',
       onClick: onExpandAll,
-      ariaLabel: `Expand all ${hiddenLines} hidden lines`,
+      ariaLabel: t('expandButton.expandAllLines', { n: hiddenLines }),
       icon: <UnfoldVertical size={16} aria-hidden="true" />,
     });
   } else {
@@ -50,7 +56,7 @@ export const ExpandButton = memo(function ExpandButton({
       actions.push({
         key: 'up',
         onClick: onExpandUp,
-        ariaLabel: `Expand ${DEFAULT_EXPAND_COUNT} hidden lines above`,
+        ariaLabel: t('expandButton.expandAbove', { n: DEFAULT_EXPAND_COUNT }),
         icon: <ArrowUpFromLine size={12} aria-hidden="true" className="translate-y-0.5" />,
       });
     }
@@ -58,7 +64,7 @@ export const ExpandButton = memo(function ExpandButton({
       actions.push({
         key: 'down',
         onClick: onExpandDown,
-        ariaLabel: `Expand ${DEFAULT_EXPAND_COUNT} hidden lines below`,
+        ariaLabel: t('expandButton.expandBelow', { n: DEFAULT_EXPAND_COUNT }),
         icon: <ArrowDownFromLine size={12} aria-hidden="true" className="-translate-y-0.5" />,
       });
     }

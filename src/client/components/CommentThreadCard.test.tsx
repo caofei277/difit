@@ -1,5 +1,4 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, userEvent } from '../utils/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { CommentThread } from '../../types/diff';

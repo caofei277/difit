@@ -16,6 +16,7 @@ import { memo, useMemo, useRef, useState, type CSSProperties, type MouseEvent } 
 
 import { type DiffFile, type CommentThread } from '../../types/diff';
 import { isSafariBrowser } from '../utils/browser';
+import { useT } from '../i18n';
 
 import { Checkbox } from './Checkbox';
 
@@ -161,6 +162,7 @@ export const FileList = memo(function FileList({
   onToggleReviewed,
   selectedFileIndex,
 }: FileListProps) {
+  const t = useT();
   const fileTree = useMemo(() => buildFileTree(files), [files]);
   const shouldUseStickyDirectoryHeaders = useMemo(
     () => !isSafariBrowser(typeof navigator === 'undefined' ? '' : navigator.userAgent),
@@ -406,7 +408,7 @@ export const FileList = memo(function FileList({
             onChange={() => {
               onToggleReviewed(file.path);
             }}
-            title={isReviewed ? 'Mark as not reviewed' : 'Mark as reviewed'}
+            title={isReviewed ? t('fileList.markAsNotReviewed') : t('fileList.markAsReviewed')}
             className="z-10"
           />
           {getFileIcon(node.file.status)}
@@ -436,13 +438,16 @@ export const FileList = memo(function FileList({
       <div className="px-4 py-3 border-b border-github-border bg-github-bg-tertiary">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold text-github-text-primary m-0">
-            Files changed ({files.length})
+            {t('fileList.filesChanged', { n: files.length })}
           </h3>
           <div className="ml-auto flex items-center gap-2">
             <span
               className="inline-flex gap-1 text-right text-xs font-medium whitespace-nowrap"
-              title="Total additions and deletions"
-              aria-label={`${diffTotals.additions} additions and ${diffTotals.deletions} deletions`}
+              title={t('fileList.totalAdditionsDeletions')}
+              aria-label={t('fileList.additionsDeletionsAria', {
+                additions: diffTotals.additions,
+                deletions: diffTotals.deletions,
+              })}
             >
               <span className="text-github-accent">+{diffTotals.additions}</span>
               <span className="text-github-danger">-{diffTotals.deletions}</span>
@@ -450,7 +455,7 @@ export const FileList = memo(function FileList({
             <button
               onClick={toggleAllDirectories}
               className="p-1 hover:bg-github-bg-primary rounded transition-colors"
-              title={isAllExpanded ? 'Collapse all' : 'Expand all'}
+              title={isAllExpanded ? t('fileList.collapseAll') : t('fileList.expandAll')}
             >
               {isAllExpanded ? (
                 <ChevronsDownUp size={16} className="text-github-text-secondary" />
@@ -467,7 +472,7 @@ export const FileList = memo(function FileList({
           />
           <input
             type="text"
-            placeholder="Filter files..."
+            placeholder={t('fileList.filterFiles')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-sm bg-github-bg-primary border border-github-border rounded-md focus:outline-none focus:border-github-accent text-github-text-primary placeholder-github-text-muted"

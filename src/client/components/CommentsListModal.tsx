@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useHotkeys, useHotkeysContext } from 'react-hotkeys-hook';
 
 import type { CommentThread } from '../../types/diff';
+import { useT } from '../i18n';
 
 import { CommentThreadCard } from './CommentThreadCard';
 import type { AppearanceSettings } from './SettingsModal';
@@ -34,6 +35,7 @@ export function CommentsListModal({
   onUpdateMessage,
   syntaxTheme,
 }: CommentsListModalProps) {
+  const t = useT();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const commentRefs = useRef<(HTMLDivElement | null)[]>([]);
   const { enableScope, disableScope } = useHotkeysContext();
@@ -60,14 +62,14 @@ export function CommentsListModal({
   const handleDeleteThread = useCallback(
     (thread: CommentThread) => {
       const preview = thread.messages[0]?.body || '';
-      if (confirm(`Resolve this thread?\n\n"${preview}"`)) {
+      if (confirm(t('commentThreadCard.resolveConfirm', { body: preview }))) {
         onRemoveThread(thread.id);
         if (selectedIndex >= sortedThreads.length - 1 && selectedIndex > 0) {
           setSelectedIndex(selectedIndex - 1);
         }
       }
     },
-    [onRemoveThread, selectedIndex, sortedThreads.length],
+    [onRemoveThread, selectedIndex, sortedThreads.length, t],
   );
 
   useEffect(() => {
@@ -137,27 +139,26 @@ export function CommentsListModal({
       <div className="relative max-h-[80vh] w-full max-w-4xl overflow-hidden rounded-lg border border-github-border bg-github-bg-primary shadow-lg">
         <div className="sticky top-0 border-b border-github-border bg-github-bg-primary px-6 py-4">
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-github-text-primary">All Comments</h2>
+            <h2 className="text-lg font-semibold text-github-text-primary">
+              {t('commentsListModal.title')}
+            </h2>
             <button
               onClick={onClose}
               className="text-github-text-secondary transition-colors hover:text-github-text-primary"
-              aria-label="Close comments list"
+              aria-label={t('commentsListModal.closeAriaLabel')}
             >
               <X size={20} />
             </button>
           </div>
-          <div className="text-xs text-github-text-secondary">
-            <span className="font-mono">j/k</span> or <span className="font-mono">↑/↓</span> to
-            navigate • <span className="font-mono">Enter</span> to jump •{' '}
-            <span className="font-mono">d</span> to resolve • <span className="font-mono">Esc</span>{' '}
-            to close
-          </div>
+          <div className="text-xs text-github-text-secondary">{t('commentsListModal.helpBar')}</div>
         </div>
 
         <div className="max-h-[calc(80vh-120px)] overflow-y-auto">
           <div className="p-6">
             {sortedThreads.length === 0 ? (
-              <p className="text-center text-github-text-secondary">No comments yet</p>
+              <p className="text-center text-github-text-secondary">
+                {t('commentsListModal.noComments')}
+              </p>
             ) : (
               <>
                 <div className="space-y-2">
@@ -193,7 +194,10 @@ export function CommentsListModal({
                   ))}
                 </div>
                 <div className="mt-4 border-t border-github-border pt-4 text-center text-xs text-github-text-secondary">
-                  {selectedIndex + 1} of {sortedThreads.length} threads
+                  {t('commentsListModal.ofThreads', {
+                    current: selectedIndex + 1,
+                    total: sortedThreads.length,
+                  })}
                 </div>
               </>
             )}

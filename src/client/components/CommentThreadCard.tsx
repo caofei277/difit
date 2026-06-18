@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import { type CommentThread, type DiffCommentMessage } from '../../types/diff';
 import { copyTextToClipboard } from '../utils/clipboard';
+import { useT } from '../i18n';
 
 import { CommentBodyRenderer } from './CommentBodyRenderer';
 import { CommentForm } from './CommentForm';
@@ -35,6 +36,7 @@ function ThreadMessageItem({
   confirmMessage,
   onClick,
 }: ThreadMessageItemProps) {
+  const t = useT();
   const [isEditing, setIsEditing] = useState(false);
   const showAuthorHeader = showAuthorBadge && Boolean(message.author);
   const isUserAuthoredMessage = message.author?.trim() === 'User';
@@ -83,7 +85,7 @@ function ThreadMessageItem({
                   type="button"
                   onClick={handleStartEdit}
                   className="rounded border border-github-border bg-github-bg-tertiary p-1.5 text-github-text-primary transition-all hover:bg-github-bg-primary"
-                  title="Edit message"
+                  title={t('commentThreadCard.editTooltip')}
                 >
                   <Edit2 size={12} />
                 </button>
@@ -117,9 +119,9 @@ function ThreadMessageItem({
           filename={filename}
           initialValue={message.body}
           embedded={true}
-          title="Edit comment"
-          submitLabel="Save"
-          placeholder="Edit your message..."
+          title={t('commentForm.editCommentTitle')}
+          submitLabel={t('commentForm.saveLabel')}
+          placeholder={t('commentForm.editPlaceholder')}
         />
       )}
     </div>
@@ -151,6 +153,7 @@ export function CommentThreadCard({
   onClick,
   syntaxTheme,
 }: CommentThreadCardProps) {
+  const t = useT();
   const [isCopied, setIsCopied] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const lineLabel = Array.isArray(thread.line)
@@ -194,10 +197,10 @@ export function CommentThreadCard({
           {thread.isOutdated && (
             <span
               className="inline-flex h-5 shrink-0 items-center rounded-full border border-github-text-muted px-2 text-[10px] font-medium text-github-text-muted"
-              title="Code has changed since this comment was made"
+              title={t('commentThreadCard.outdatedTooltip')}
               aria-label="Outdated comment"
             >
-              Outdated
+              {t('commentThreadCard.outdated')}
             </span>
           )}
         </div>
@@ -211,11 +214,11 @@ export function CommentThreadCard({
               color: 'var(--color-yellow-btn-text)',
               border: '1px solid var(--color-yellow-btn-border)',
             }}
-            title="Copy thread prompt for AI coding agent"
+            title={t('commentThreadCard.copyPromptTooltip')}
           >
             <span className="inline-flex items-center gap-1">
               <Copy size={12} />
-              {isCopied ? 'Copied!' : 'Copy Prompt'}
+              {isCopied ? t('commentThreadCard.copied') : t('commentThreadCard.copyPrompt')}
             </span>
           </button>
           <button
@@ -224,9 +227,9 @@ export function CommentThreadCard({
               e.stopPropagation();
               setIsReplying((prev) => !prev);
             }}
-            aria-label="Reply"
+            aria-label={t('commentThreadCard.replyAriaLabel')}
             className="rounded border border-github-border bg-github-bg-tertiary p-1.5 text-github-text-primary transition-all hover:bg-github-bg-primary"
-            title="Reply to thread"
+            title={t('commentThreadCard.replyTooltip')}
           >
             <MessageSquareReply size={14} />
           </button>
@@ -243,9 +246,11 @@ export function CommentThreadCard({
           originalCode={thread.codeContent}
           onUpdate={(newBody) => onUpdateMessage(thread.id, rootMessage.id, newBody)}
           onResolveOrDelete={() => onRemoveThread(thread.id)}
-          actionLabel="Resolve thread"
+          actionLabel={t('commentThreadCard.resolveThread')}
           confirmMessage={
-            confirmRootAction ? `Resolve this thread?\n\n"${rootMessage.body}"` : undefined
+            confirmRootAction
+              ? t('commentThreadCard.resolveConfirm', { body: rootMessage.body })
+              : undefined
           }
         />
 
@@ -259,8 +264,8 @@ export function CommentThreadCard({
               originalCode={thread.codeContent}
               onUpdate={(newBody) => onUpdateMessage(thread.id, message.id, newBody)}
               onResolveOrDelete={() => onRemoveMessage(thread.id, message.id)}
-              actionLabel="Delete reply"
-              confirmMessage={`Delete this reply?\n\n"${message.body}"`}
+              actionLabel={t('commentThreadCard.deleteReply')}
+              confirmMessage={t('commentThreadCard.deleteConfirm', { body: message.body })}
             />
           </div>
         ))}
@@ -280,9 +285,9 @@ export function CommentThreadCard({
               syntaxTheme={syntaxTheme}
               filename={thread.file}
               embedded={true}
-              title="Reply to thread"
-              submitLabel="Reply"
-              placeholder="Write a reply..."
+              title={t('commentThreadCard.replyFormTitle')}
+              submitLabel={t('commentThreadCard.replySubmitLabel')}
+              placeholder={t('commentThreadCard.replyPlaceholder')}
             />
           </div>
         )}

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../utils/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
 

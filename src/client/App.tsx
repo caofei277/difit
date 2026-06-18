@@ -20,6 +20,7 @@ import {
   normalizeBaseMode,
 } from '../utils/diffSelection';
 
+import { useT } from './i18n';
 import { Checkbox } from './components/Checkbox';
 import { CommentsDropdown } from './components/CommentsDropdown';
 import { CommentsListModal } from './components/CommentsListModal';
@@ -553,7 +554,7 @@ function App() {
       }
     },
     onDeleteAllComments: () => {
-      if (threads.length > 0 && confirm('Delete all comments?')) {
+      if (threads.length > 0 && confirm(t('app.deleteAllCommentsConfirm'))) {
         clearAllComments();
       }
     },
@@ -722,6 +723,8 @@ function App() {
       // Ignore localStorage errors (e.g. disabled storage).
     }
   }, [isFileTreeOpen]);
+
+  const t = useT();
 
   // Fetch revision options on mount
   useEffect(() => {
@@ -1032,7 +1035,7 @@ function App() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-github-bg-primary">
-        <div className="text-github-text-secondary text-base">Loading diff...</div>
+        <div className="text-github-text-secondary text-base">{t('app.loading')}</div>
       </div>
     );
   }
@@ -1040,7 +1043,7 @@ function App() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-github-bg-primary text-center gap-2">
-        <h2 className="text-github-danger text-2xl mb-2">Error</h2>
+        <h2 className="text-github-danger text-2xl mb-2">{t('app.errorTitle')}</h2>
         <p className="text-github-text-secondary text-base">{error}</p>
       </div>
     );
@@ -1049,8 +1052,8 @@ function App() {
   if (!diffData) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-github-bg-primary text-center gap-2">
-        <h2 className="text-github-danger text-2xl mb-2">No data</h2>
-        <p className="text-github-text-secondary text-base">No diff data available</p>
+        <h2 className="text-github-danger text-2xl mb-2">{t('app.noDataTitle')}</h2>
+        <p className="text-github-text-secondary text-base">{t('app.noDataDesc')}</p>
       </div>
     );
   }
@@ -1086,17 +1089,17 @@ function App() {
               <button
                 onClick={() => setIsFileTreeOpen(!isFileTreeOpen)}
                 className="p-2 text-github-text-secondary hover:text-github-text-primary hover:bg-github-bg-tertiary rounded transition-colors"
-                title={isFileTreeOpen ? 'Collapse file tree' : 'Expand file tree'}
+                title={isFileTreeOpen ? t('app.collapseFileTree') : t('app.expandFileTree')}
                 aria-expanded={isFileTreeOpen}
                 aria-controls="file-tree-panel"
-                aria-label="Toggle file tree panel"
+                aria-label={t('app.toggleFileTree')}
               >
                 {isFileTreeOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
               </button>
               <button
                 onClick={() => setIsSettingsOpen(true)}
                 className="p-2 text-github-text-secondary hover:text-github-text-primary hover:bg-github-bg-tertiary rounded transition-colors"
-                title="Settings"
+                title={t('app.settings')}
               >
                 <Settings size={18} />
               </button>
@@ -1130,7 +1133,7 @@ function App() {
                     }`}
                   >
                     <Columns size={14} />
-                    Split
+                    {t('app.diffModeSplit')}
                   </button>
                   <button
                     onClick={() => handleDiffModeChange('unified')}
@@ -1141,15 +1144,15 @@ function App() {
                     }`}
                   >
                     <AlignLeft size={14} />
-                    Unified
+                    {t('app.diffModeUnified')}
                   </button>
                 </div>
               )}
               <Checkbox
                 checked={ignoreWhitespace}
                 onChange={setIgnoreWhitespace}
-                label="Ignore Whitespace"
-                title={ignoreWhitespace ? 'Show whitespace changes' : 'Ignore whitespace changes'}
+                label={t('app.ignoreWhitespace')}
+                title={ignoreWhitespace ? t('app.showWhitespace') : t('app.hideWhitespace')}
               />
               {/* File Watch Reload Button */}
               <ReloadButton
@@ -1177,8 +1180,11 @@ function App() {
               <div className="flex flex-col gap-1 items-center">
                 <div className="text-xs relative">
                   {viewedFiles.size === diffData.files.length
-                    ? 'All diffs difit-ed!'
-                    : `${viewedFiles.size} / ${diffData.files.length} files viewed`}
+                    ? t('app.allDiffsReviewed')
+                    : t('app.filesViewed', {
+                        viewed: viewedFiles.size,
+                        total: diffData.files.length,
+                      })}
                   <SparkleAnimation isActive={showSparkles} />
                 </div>
                 <div
@@ -1216,7 +1222,7 @@ function App() {
                 />
               ) : (
                 <span className="text-xs">
-                  Reviewing:{' '}
+                  {t('app.reviewing')}{' '}
                   <code className="bg-github-bg-tertiary px-1.5 py-0.5 rounded text-xs text-github-text-primary">
                     {diffData.commit.includes('...') ? (
                       <>
@@ -1250,7 +1256,7 @@ function App() {
         {isMobile && isFileTreeOpen && (
           <button
             type="button"
-            aria-label="Close file tree"
+            aria-label={t('app.closeFileTree')}
             className="fixed inset-0 bg-black/40 z-30"
             onClick={() => setIsFileTreeOpen(false)}
           />
@@ -1298,19 +1304,19 @@ function App() {
                   <button
                     onClick={() => setIsHelpOpen(true)}
                     className="flex items-center gap-1.5 text-github-text-secondary hover:text-github-text-primary transition-colors"
-                    title="Keyboard shortcuts (Shift+?)"
+                    title={t('app.keyboardShortcuts')}
                   >
                     <Keyboard size={16} />
-                    <span className="text-sm">Shortcuts</span>
+                    <span className="text-sm">{t('app.shortcuts')}</span>
                   </button>
                   <a
                     href="https://github.com/yoshiko-pg/difit"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-github-text-secondary hover:text-github-text-primary transition-colors"
-                    title="View on GitHub"
+                    title={t('app.starOnGitHub')}
                   >
-                    <span className="text-sm">Star on GitHub</span>
+                    <span className="text-sm">{t('app.starOnGitHub')}</span>
                     <GitHubIcon style={{ height: '18px', width: '18px' }} />
                   </a>
                 </div>
@@ -1325,7 +1331,7 @@ function App() {
                 width: isFileTreeOpen ? '4px' : '0px',
               }}
               onMouseDown={handleMouseDown}
-              title="Drag to resize file list"
+              title={t('app.dragToResize')}
             />
           )}
 
@@ -1389,7 +1395,7 @@ function App() {
                       <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <div className="text-xs uppercase tracking-wide text-github-text-muted">
-                            Deferred Rendering
+                            {t('app.deferredRendering')}
                           </div>
                           <div className="text-sm font-mono text-github-text-primary truncate">
                             {file.path}
@@ -1400,7 +1406,7 @@ function App() {
                           onClick={() => ensureFileRendered(file.path)}
                           className="px-3 py-1.5 text-xs rounded border border-github-border text-github-text-secondary hover:text-github-text-primary hover:bg-github-bg-tertiary"
                         >
-                          Load now
+                          {t('app.loadNow')}
                         </button>
                       </div>
                     </div>

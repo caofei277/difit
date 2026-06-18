@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { DEFAULT_DIFF_VIEW_MODE } from '../../utils/diffMode';
+import { useT } from '../i18n';
 
 import type { DiffViewerBodyProps } from './types';
 
@@ -27,6 +28,7 @@ export function ImageDiffViewer({
   baseCommitish,
   targetCommitish,
 }: DiffViewerBodyProps) {
+  const t = useT();
   const mode = diffMode ?? DEFAULT_DIFF_VIEW_MODE;
   const isDeleted = file.status === 'deleted';
   const isAdded = file.status === 'added';
@@ -92,15 +94,17 @@ export function ImageDiffViewer({
       <div className="bg-github-bg-primary p-4">
         <div className="text-center">
           <div className="mb-2">
-            <span className="text-github-danger font-medium">Deleted Image</span>
+            <span className="text-github-danger font-medium">
+              {t('imageDiffViewer.deletedImage')}
+            </span>
           </div>
           <div className="inline-block border border-github-border rounded-md p-4 bg-github-bg-secondary">
             <div className="text-github-text-muted mb-2" style={{ fontSize: '14px' }}>
-              Previous version:
+              {t('imageDiffViewer.previousVersion')}
             </div>
             <img
               src={imageBlobUrl(file.oldPath || file.path, baseRef)}
-              alt={`Previous version of ${file.oldPath || file.path}`}
+              alt={t('imageDiffViewer.previousVersionAlt', { path: file.oldPath || file.path })}
               className="max-w-full max-h-96 border border-github-border rounded mx-auto"
               style={checkerboardStyle}
               onLoad={(e) => handleImageLoad(e.currentTarget, setOldImageInfo)}
@@ -111,7 +115,7 @@ export function ImageDiffViewer({
               }}
             />
             <div className="hidden text-github-text-muted text-sm mt-2">
-              Image could not be loaded
+              {t('imageDiffViewer.imageNotLoaded')}
             </div>
             {(oldImageInfo.width || oldImageInfo.size) && (
               <div className="text-github-text-muted mt-2" style={{ fontSize: '14px' }}>
@@ -132,15 +136,17 @@ export function ImageDiffViewer({
       <div className="bg-github-bg-primary p-4">
         <div className="text-center">
           <div className="mb-2">
-            <span className="text-github-accent font-medium">Added Image</span>
+            <span className="text-github-accent font-medium">
+              {t('imageDiffViewer.addedImage')}
+            </span>
           </div>
           <div className="inline-block border border-github-border rounded-md p-4 bg-github-bg-secondary">
             <div className="text-github-text-muted mb-2" style={{ fontSize: '14px' }}>
-              New file:
+              {t('imageDiffViewer.newFile')}
             </div>
             <img
               src={imageBlobUrl(file.path, targetRef)}
-              alt={`New image ${file.path}`}
+              alt={t('imageDiffViewer.newImageAlt', { path: file.path })}
               className="max-w-full max-h-96 border border-github-border rounded mx-auto"
               style={checkerboardStyle}
               onLoad={(e) => handleImageLoad(e.currentTarget, setNewImageInfo)}
@@ -151,7 +157,7 @@ export function ImageDiffViewer({
               }}
             />
             <div className="hidden text-github-text-muted text-sm mt-2">
-              Image could not be loaded
+              {t('imageDiffViewer.imageNotLoaded')}
             </div>
             {(newImageInfo.width || newImageInfo.size) && (
               <div className="text-github-text-muted mt-2" style={{ fontSize: '14px' }}>
@@ -172,18 +178,20 @@ export function ImageDiffViewer({
       return (
         <div className="bg-github-bg-primary p-4">
           <div className="text-center mb-4">
-            <span className="text-github-text-primary font-medium">Modified Image</span>
+            <span className="text-github-text-primary font-medium">
+              {t('imageDiffViewer.modifiedImage')}
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {/* Old version */}
             <div className="text-center">
               <div className="border border-github-border rounded-md p-4 bg-github-bg-secondary">
                 <div className="text-github-text-muted mb-2" style={{ fontSize: '14px' }}>
-                  Previous version:
+                  {t('imageDiffViewer.previousVersion')}
                 </div>
                 <img
                   src={imageBlobUrl(file.oldPath || file.path, baseRef)}
-                  alt={`Previous version of ${file.oldPath || file.path}`}
+                  alt={t('imageDiffViewer.previousVersionAlt', { path: file.oldPath || file.path })}
                   className="max-w-full max-h-96 border border-github-border rounded mx-auto"
                   style={checkerboardStyle}
                   onLoad={(e) => handleImageLoad(e.currentTarget, setOldImageInfo)}
@@ -194,7 +202,7 @@ export function ImageDiffViewer({
                   }}
                 />
                 <div className="hidden text-github-text-muted text-sm mt-2">
-                  Image could not be loaded
+                  {t('imageDiffViewer.imageNotLoaded')}
                 </div>
                 {(oldImageInfo.width || oldImageInfo.size) && (
                   <div className="text-github-text-muted mt-2" style={{ fontSize: '14px' }}>
@@ -210,11 +218,11 @@ export function ImageDiffViewer({
             <div className="text-center">
               <div className="border border-github-border rounded-md p-4 bg-github-bg-secondary">
                 <div className="text-github-text-muted mb-2" style={{ fontSize: '14px' }}>
-                  Current version:
+                  {t('imageDiffViewer.currentVersion')}
                 </div>
                 <img
                   src={imageBlobUrl(file.path, targetRef)}
-                  alt={`Current version of ${file.path}`}
+                  alt={t('imageDiffViewer.currentVersionAlt', { path: file.path })}
                   className="max-w-full max-h-96 border border-github-border rounded mx-auto"
                   style={checkerboardStyle}
                   onLoad={(e) => handleImageLoad(e.currentTarget, setNewImageInfo)}
@@ -225,7 +233,7 @@ export function ImageDiffViewer({
                   }}
                 />
                 <div className="hidden text-github-text-muted text-sm mt-2">
-                  Image could not be loaded
+                  {t('imageDiffViewer.imageNotLoaded')}
                 </div>
                 {(newImageInfo.width || newImageInfo.size) && (
                   <div className="text-github-text-muted mt-2" style={{ fontSize: '14px' }}>
@@ -244,18 +252,20 @@ export function ImageDiffViewer({
       return (
         <div className="bg-github-bg-primary p-4">
           <div className="text-center mb-4">
-            <span className="text-github-text-primary font-medium">Modified Image</span>
+            <span className="text-github-text-primary font-medium">
+              {t('imageDiffViewer.modifiedImage')}
+            </span>
           </div>
           <div className="space-y-6">
             {/* Old version */}
             <div className="text-center">
               <div className="border border-github-border rounded-md p-4 bg-github-bg-secondary inline-block">
                 <div className="text-github-text-muted mb-2" style={{ fontSize: '14px' }}>
-                  Previous version:
+                  {t('imageDiffViewer.previousVersion')}
                 </div>
                 <img
                   src={imageBlobUrl(file.oldPath || file.path, baseRef)}
-                  alt={`Previous version of ${file.oldPath || file.path}`}
+                  alt={t('imageDiffViewer.previousVersionAlt', { path: file.oldPath || file.path })}
                   className="max-w-full max-h-96 border border-github-border rounded mx-auto"
                   style={checkerboardStyle}
                   onLoad={(e) => handleImageLoad(e.currentTarget, setOldImageInfo)}
@@ -266,7 +276,7 @@ export function ImageDiffViewer({
                   }}
                 />
                 <div className="hidden text-github-text-muted text-sm mt-2">
-                  Image could not be loaded
+                  {t('imageDiffViewer.imageNotLoaded')}
                 </div>
                 {(oldImageInfo.width || oldImageInfo.size) && (
                   <div className="text-github-text-muted mt-2" style={{ fontSize: '14px' }}>
@@ -282,11 +292,11 @@ export function ImageDiffViewer({
             <div className="text-center">
               <div className="border border-github-border rounded-md p-4 bg-github-bg-secondary inline-block">
                 <div className="text-github-text-muted mb-2" style={{ fontSize: '14px' }}>
-                  Current version:
+                  {t('imageDiffViewer.currentVersion')}
                 </div>
                 <img
                   src={imageBlobUrl(file.path, targetRef)}
-                  alt={`Current version of ${file.path}`}
+                  alt={t('imageDiffViewer.currentVersionAlt', { path: file.path })}
                   className="max-w-full max-h-96 border border-github-border rounded mx-auto"
                   style={checkerboardStyle}
                   onLoad={(e) => handleImageLoad(e.currentTarget, setNewImageInfo)}
@@ -297,7 +307,7 @@ export function ImageDiffViewer({
                   }}
                 />
                 <div className="hidden text-github-text-muted text-sm mt-2">
-                  Image could not be loaded
+                  {t('imageDiffViewer.imageNotLoaded')}
                 </div>
                 {(newImageInfo.width || newImageInfo.size) && (
                   <div className="text-github-text-muted mt-2" style={{ fontSize: '14px' }}>

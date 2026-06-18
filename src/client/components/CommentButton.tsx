@@ -1,5 +1,6 @@
 import { MessageSquare } from 'lucide-react';
 import React from 'react';
+import { useT } from '../i18n';
 
 interface CommentButtonProps {
   onMouseDown: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -8,7 +9,9 @@ interface CommentButtonProps {
 }
 
 export const CommentButton: React.FC<CommentButtonProps> = React.memo(
-  ({ onMouseDown, onMouseUp, title = 'Add a comment' }) => {
+  ({ onMouseDown, onMouseUp, title }) => {
+    const t = useT();
+    const effectiveTitle = title ?? t('commentButton.addComment');
     return (
       <button
         className="absolute -right-2 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded transition-all duration-150 hover:scale-110 z-10"
@@ -28,7 +31,7 @@ export const CommentButton: React.FC<CommentButtonProps> = React.memo(
         }}
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
-        title={title}
+        title={effectiveTitle}
       >
         <MessageSquare className="w-4 h-4" />
       </button>

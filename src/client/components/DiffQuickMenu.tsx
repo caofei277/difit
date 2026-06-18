@@ -21,6 +21,7 @@ import {
   diffSelectionsEqual,
   normalizeBaseMode,
 } from '../../utils/diffSelection';
+import { useT } from '../i18n';
 
 interface DiffQuickMenuProps {
   options: RevisionsResponse;
@@ -32,13 +33,13 @@ interface DiffQuickMenuProps {
   compact?: boolean;
 }
 
-const SPECIAL_LABEL_OVERRIDES: Record<string, string> = {
-  '.': 'Uncommitted Changes',
-  staged: 'Staging Area',
-  working: 'Working Directory',
-};
-
 const UNCOMMITTED_TARGETS = new Set(['.', 'staged', 'working']);
+
+const getSpecialLabelOverrides = (t: ReturnType<typeof useT>): Record<string, string> => ({
+  '.': t('diffQuickMenu.uncommittedChanges'),
+  staged: t('diffQuickMenu.stagingArea'),
+  working: t('diffQuickMenu.workingDirectory'),
+});
 
 export const getPreviousCommitPreset = (targetRevision: string): DiffSelection => {
   const target =
@@ -70,8 +71,9 @@ const resolveDisplayLabel = (
   options: RevisionsResponse,
   value: string,
   resolvedValue?: string,
+  t?: ReturnType<typeof useT>,
 ): string => {
-  if (!value) return 'Select...';
+  if (!value) return t ? t('diffQuickMenu.select') : 'Select...';
 
   const caret = value.endsWith('^');
   const baseValue = caret ? value.slice(0, -1) : value;
@@ -80,8 +82,11 @@ const resolveDisplayLabel = (
     return value;
   }
 
-  const override = SPECIAL_LABEL_OVERRIDES[value];
-  if (override) return override;
+  if (t) {
+    const overrides = getSpecialLabelOverrides(t);
+    const override = overrides[value];
+    if (override) return override;
+  }
 
   const special = options.specialOptions.find((opt) => opt.value === value);
   if (special) return special.label;
@@ -114,6 +119,7 @@ export function DiffQuickMenu({
   const [isOpen, setIsOpen] = useState(false);
   const [isCommitMenuOpen, setIsCommitMenuOpen] = useState(false);
   const isCompact = compact;
+  const t = useT();
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen || isCommitMenuOpen,
@@ -182,16 +188,22 @@ export function DiffQuickMenu({
       return `${commitMatch.shortHash} ${commitMatch.message}`;
     }
 
-    const baseLabel = resolveDisplayLabel(options, selection.baseCommitish, resolvedBaseRevision);
+    const baseLabel = resolveDisplayLabel(
+      options,
+      selection.baseCommitish,
+      resolvedBaseRevision,
+      t,
+    );
     const targetLabel = resolveDisplayLabel(
       options,
       selection.targetCommitish,
       resolvedTargetRevision,
+      t,
     );
     const mergeBaseSuffix =
       normalizeBaseMode(selection.baseMode) === 'merge-base' ? ' (merge-base)' : '';
     return `${baseLabel}...${targetLabel}${mergeBaseSuffix}`;
-  }, [options, selection, resolvedBaseRevision, resolvedTargetRevision]);
+  }, [options, selection, resolvedBaseRevision, resolvedTargetRevision, t]);
 
   const mainBranch = useMemo(
     () =>
@@ -266,7 +278,7 @@ export function DiffQuickMenu({
         className="flex items-center gap-1.5 cursor-pointer group"
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        aria-label={`Revision menu: ${currentLabel}`}
+        aria-label={t('diffQuickMenu.revisionMenu', { label: currentLabel })}
         title={currentLabel}
         {...getReferenceProps()}
       >
@@ -299,19 +311,19 @@ export function DiffQuickMenu({
           >
             <div className="border-b border-github-border">
               <div className="px-3 py-2 text-xs font-semibold text-github-text-secondary bg-github-bg-tertiary">
-                Quick Diffs
+                {t('diffQuickMenu.quickDiffs')}
               </div>
               <button
                 onClick={() => handleSelect(headPreset)}
                 className={getItemClasses(isPresetActive(headPreset), false)}
               >
-                HEAD
+                {t('diffQuickMenu.head')}
               </button>
               <button
                 onClick={() => handleSelect(headUncommittedPreset)}
                 className={getItemClasses(isPresetActive(headUncommittedPreset), false)}
               >
-                HEAD...Uncommitted (merge-base)
+                {t('diffQuickMenu.headUncommitted')}
               </button>
               {mainBranch && mainUncommittedPreset && (
                 <>
@@ -319,7 +331,7 @@ export function DiffQuickMenu({
                     onClick={() => handleSelect(mainUncommittedPreset)}
                     className={getItemClasses(isPresetActive(mainUncommittedPreset), false)}
                   >
-                    {mainBranch.name}...Uncommitted (merge-base)
+                    {t('diffQuickMenu.branchUncommitted', { branch: mainBranch.name })}
                   </button>
                 </>
               )}
@@ -328,7 +340,7 @@ export function DiffQuickMenu({
                   onClick={() => handleSelect(originUncommittedPreset)}
                   className={getItemClasses(isPresetActive(originUncommittedPreset), false)}
                 >
-                  {originDefaultBranch}...Uncommitted (merge-base)
+                  {t('diffQuickMenu.branchUncommitted', { branch: originDefaultBranch })}
                 </button>
               )}
             </div>
@@ -339,7 +351,7 @@ export function DiffQuickMenu({
                 className={getItemClasses(isPresetActive(previousCommitPreset), false)}
                 type="button"
               >
-                Previous commit
+                {t('diffQuickMenu.previousCommit')}
               </button>
             </div>
 
@@ -353,7 +365,7 @@ export function DiffQuickMenu({
               >
                 <div className="flex items-center gap-2">
                   <ChevronLeft size={12} className="text-github-text-secondary" />
-                  <span>Pick Commit...</span>
+                  <span>{t('diffQuickMenu.pickCommit')}</span>
                 </div>
               </button>
             </div>
@@ -364,7 +376,7 @@ export function DiffQuickMenu({
                 className={getItemClasses(false, false)}
                 type="button"
               >
-                Detailed...
+                {t('diffQuickMenu.detailed')}
               </button>
             </div>
           </div>
@@ -380,7 +392,7 @@ export function DiffQuickMenu({
             {...getCommitFloatingProps()}
           >
             <div className="px-3 py-2 text-xs font-semibold text-github-text-secondary bg-github-bg-tertiary">
-              Recent Commits
+              {t('diffQuickMenu.recentCommits')}
             </div>
             {options.commits.map((commit) => (
               <button

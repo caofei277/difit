@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '../utils/test-utils';
 import React from 'react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 import { describe, expect, it, vi } from 'vitest';

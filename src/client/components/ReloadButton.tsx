@@ -1,4 +1,5 @@
 import { RefreshCw } from 'lucide-react';
+import { useT } from '../i18n';
 
 interface ReloadButtonProps {
   shouldReload: boolean;
@@ -17,6 +18,8 @@ export function ReloadButton({
   className = '',
   compact = false,
 }: ReloadButtonProps) {
+  const t = useT();
+
   if (!shouldReload) {
     return null;
   }
@@ -24,13 +27,13 @@ export function ReloadButton({
   const getChangeMessage = () => {
     switch (changeType) {
       case 'commit':
-        return 'New commits available';
+        return t('reloadButton.newCommits');
       case 'staging':
-        return 'Staging changes detected';
+        return t('reloadButton.stagingChanges');
       case 'file':
-        return 'File changes detected';
+        return t('reloadButton.fileChanges');
       default:
-        return 'Changes detected';
+        return t('reloadButton.changesDetected');
     }
   };
 
@@ -48,11 +51,15 @@ export function ReloadButton({
             : 'bg-github-text-primary text-github-bg-primary border-github-text-primary'
         }
       `}
-      title={`${getChangeMessage()} - Click to refresh`}
-      aria-label={compact ? 'Refresh' : undefined}
+      title={t('reloadButton.clickToRefresh', { message: getChangeMessage() })}
+      aria-label={compact ? t('reloadButton.refresh') : undefined}
     >
       <RefreshCw size={12} className={`${isReloading ? 'animate-spin' : ''}`} />
-      {compact ? <span className="sr-only">Refresh</span> : 'Refresh'}
+      {compact ? (
+        <span className="sr-only">{t('reloadButton.refresh')}</span>
+      ) : (
+        t('reloadButton.refresh')
+      )}
     </button>
   );
 }

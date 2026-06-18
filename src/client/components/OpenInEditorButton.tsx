@@ -1,6 +1,8 @@
 import { ExternalLink } from 'lucide-react';
 import React from 'react';
 
+import { useT } from '../i18n';
+
 interface OpenInEditorButtonProps {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   title?: string;
@@ -9,6 +11,9 @@ interface OpenInEditorButtonProps {
 
 export const OpenInEditorButton: React.FC<OpenInEditorButtonProps> = React.memo(
   ({ onClick, title = 'Open in editor', className }) => {
+    const t = useT();
+    const effectiveTitle = title === 'Open in editor' ? t('openInEditor.openInEditor') : title;
+
     return (
       <button
         className={`absolute -right-10 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded transition-all duration-150 hover:scale-110 z-10 ${className || ''}`}
@@ -33,7 +38,7 @@ export const OpenInEditorButton: React.FC<OpenInEditorButtonProps> = React.memo(
           e.stopPropagation();
           onClick(e);
         }}
-        title={title}
+        title={effectiveTitle}
       >
         <ExternalLink className="w-4 h-4 opacity-80" />
       </button>

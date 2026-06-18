@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import App from '../client/App';
+import { I18nProvider } from '../client/i18n';
 
 import {
   installStaticApiBridge,
@@ -59,7 +60,11 @@ function StaticDiffApp() {
     );
   }
 
-  return <App />;
+  return (
+    <I18nProvider>
+      <App />
+    </I18nProvider>
+  );
 }
 
 export default StaticDiffApp;

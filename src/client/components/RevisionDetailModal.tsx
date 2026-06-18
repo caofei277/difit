@@ -2,6 +2,7 @@ import { X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useHotkeysContext } from 'react-hotkeys-hook';
 
+import { useT } from '../i18n';
 import { type DiffSelection, type RevisionsResponse } from '../../types/diff';
 import { createDiffSelection } from '../../utils/diffSelection';
 
@@ -26,6 +27,7 @@ export function RevisionDetailModal({
   resolvedTargetRevision,
   onApply,
 }: RevisionDetailModalProps) {
+  const t = useT();
   const [localSelection, setLocalSelection] = useState(selection);
   const { enableScope, disableScope } = useHotkeysContext();
   const localBase = localSelection.baseCommitish;
@@ -90,11 +92,13 @@ export function RevisionDetailModal({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-github-bg-secondary border border-github-border rounded-lg shadow-lg w-full max-w-lg mx-4">
         <div className="flex items-center justify-between p-4 border-b border-github-border">
-          <h2 className="text-lg font-semibold text-github-text-primary">Detailed Diff</h2>
+          <h2 className="text-lg font-semibold text-github-text-primary">
+            {t('revisionDetailModal.title')}
+          </h2>
           <button
             onClick={onClose}
             className="text-github-text-secondary hover:text-github-text-primary p-1"
-            aria-label="Close detailed diff"
+            aria-label={t('revisionDetailModal.closeAriaLabel')}
           >
             <X size={18} />
           </button>
@@ -102,7 +106,7 @@ export function RevisionDetailModal({
         <div className="p-4 space-y-4">
           <div className="flex items-center justify-center gap-3">
             <RevisionSelector
-              label="Base"
+              label={t('revisionDetailModal.base')}
               value={localBase}
               resolvedValue={resolvedBaseRevision}
               onChange={(value) =>
@@ -113,7 +117,7 @@ export function RevisionDetailModal({
             />
             <span className="text-github-text-muted">...</span>
             <RevisionSelector
-              label="Target"
+              label={t('revisionDetailModal.target')}
               value={localTarget}
               resolvedValue={resolvedTargetRevision}
               onChange={(value) =>
@@ -129,14 +133,14 @@ export function RevisionDetailModal({
               className="px-3 py-1.5 text-xs font-medium rounded border border-github-border text-github-text-secondary hover:text-github-text-primary transition-colors"
               type="button"
             >
-              Cancel
+              {t('revisionDetailModal.cancel')}
             </button>
             <button
               onClick={handleApply}
               className="px-3 py-1.5 text-xs font-medium rounded bg-github-accent text-white hover:bg-github-accent/90 transition-colors"
               type="button"
             >
-              Apply
+              {t('revisionDetailModal.apply')}
             </button>
           </div>
         </div>

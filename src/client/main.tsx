@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 
+import { I18nProvider } from './i18n';
 import App from './App';
 import './styles/global.css';
 
@@ -14,7 +15,9 @@ if (!rootElement) {
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <HotkeysProvider initiallyActiveScopes={['navigation']}>
-      <App />
+      <I18nProvider>
+        <App />
+      </I18nProvider>
     </HotkeysProvider>
   </React.StrictMode>,
 );

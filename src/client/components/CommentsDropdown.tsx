@@ -1,5 +1,6 @@
 import { Copy, Eraser, ChevronDown, Check, List } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useT } from '../i18n';
 
 interface CommentsDropdownProps {
   commentsCount: number;
@@ -20,6 +21,7 @@ export function CommentsDropdown({
   direction = 'down',
   compact = false,
 }: CommentsDropdownProps) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const isCompact = compact;
@@ -53,11 +55,11 @@ export function CommentsDropdown({
 
   const copyLabel = isCompact
     ? isCopiedAll
-      ? 'Copied'
-      : `Copy All (${commentsCount})`
+      ? t('commentsDropdown.copied')
+      : t('commentsDropdown.copyAllCount', { n: commentsCount })
     : isCopiedAll
-      ? 'Copied All!'
-      : `Copy All Prompt (${commentsCount})`;
+      ? t('commentsDropdown.copiedAll')
+      : t('commentsDropdown.copyAllPrompt', { n: commentsCount });
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -81,7 +83,7 @@ export function CommentsDropdown({
             e.currentTarget.style.backgroundColor = 'var(--color-yellow-btn-bg)';
             e.currentTarget.style.borderColor = 'var(--color-yellow-btn-border)';
           }}
-          title={`Copy all ${commentsCount} comments to AI coding agent`}
+          title={t('commentsDropdown.copyAllTooltip', { n: commentsCount })}
         >
           {isCopiedAll ? <Check size={12} /> : <Copy size={12} />}
           {copyLabel}
@@ -105,7 +107,7 @@ export function CommentsDropdown({
             e.currentTarget.style.backgroundColor = 'var(--color-yellow-btn-bg)';
             e.currentTarget.style.borderColor = 'var(--color-yellow-btn-border)';
           }}
-          title="More options"
+          title={t('commentsDropdown.moreOptions')}
         >
           <ChevronDown
             size={12}
@@ -131,7 +133,7 @@ export function CommentsDropdown({
               disabled={commentsCount === 0}
             >
               <List size={12} />
-              View All Comments
+              {t('commentsDropdown.viewAllComments')}
             </button>
           )}
           <button
@@ -139,7 +141,7 @@ export function CommentsDropdown({
             className="w-full text-left px-3 py-2 text-xs flex items-center gap-2 text-github-text-primary hover:bg-github-bg-tertiary transition-colors"
           >
             <Eraser size={12} />
-            Cleanup All Prompt
+            {t('commentsDropdown.cleanupAll')}
           </button>
         </div>
       )}

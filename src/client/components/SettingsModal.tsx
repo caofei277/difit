@@ -1,6 +1,7 @@
 import { Settings, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useHotkeysContext } from 'react-hotkeys-hook';
+import { useT, useLanguage } from '../i18n';
 
 import {
   CUSTOM_EDITOR_ID,
@@ -79,18 +80,9 @@ const COLOR_VISION_MODES = [
   },
 ] as const;
 
-const SETTINGS_SECTIONS = [
-  {
-    id: 'appearance',
-    label: 'Appearance',
-  },
-  {
-    id: 'system',
-    label: 'System',
-  },
-] as const;
-
 export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: SettingsModalProps) {
+  const t = useT();
+  const { language, setLanguage } = useLanguage();
   const [autoViewedPatternsInput, setAutoViewedPatternsInput] = useState(
     formatAutoViewedPatterns(settings.autoViewedPatterns),
   );
@@ -180,7 +172,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
         <div className="flex items-center justify-between p-4 border-b border-github-border">
           <h2 className="text-lg font-semibold text-github-text-primary flex items-center gap-2">
             <Settings size={20} />
-            Settings
+            {t('settingsModal.title')}
           </h2>
           <button
             onClick={onClose}
@@ -196,7 +188,10 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
             className="sm:w-40 border-b sm:border-b-0 sm:border-r border-github-border px-3 py-2"
           >
             <div className="flex sm:flex-col gap-1">
-              {SETTINGS_SECTIONS.map((section) => {
+              {[
+                { id: 'appearance' as const, label: t('settingsModal.appearanceTab') },
+                { id: 'system' as const, label: t('settingsModal.systemTab') },
+              ].map((section) => {
                 const isActive = section.id === activeSection;
                 return (
                   <button
@@ -222,7 +217,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-github-text-primary mb-2">
-                    Font Size
+                    {t('settingsModal.fontSize')}
                   </label>
                   <div className="flex items-center gap-3">
                     <input
@@ -247,7 +242,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
 
                 <div>
                   <label className="block text-sm font-medium text-github-text-primary mb-2">
-                    Font Family
+                    {t('settingsModal.fontFamily')}
                   </label>
                   <select
                     value={settings.fontFamily}
@@ -256,7 +251,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                   >
                     {FONT_FAMILIES.map((font) => (
                       <option key={font.value} value={font.value}>
-                        {font.name}
+                        {font.name === 'System Font' ? t('settingsModal.fontSystem') : font.name}
                       </option>
                     ))}
                   </select>
@@ -264,7 +259,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
 
                 <div>
                   <label className="block text-sm font-medium text-github-text-primary mb-2">
-                    Theme
+                    {t('settingsModal.theme')}
                   </label>
                   <div className="flex gap-2">
                     {(['light', 'dark', 'auto'] as const).map((theme) => (
@@ -278,7 +273,11 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                             : 'bg-github-bg-tertiary text-github-text-secondary border-github-border hover:text-github-text-primary'
                         }`}
                       >
-                        {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                        {theme === 'light'
+                          ? t('settingsModal.light')
+                          : theme === 'dark'
+                            ? t('settingsModal.dark')
+                            : t('settingsModal.auto')}
                       </button>
                     ))}
                   </div>
@@ -286,7 +285,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
 
                 <div>
                   <label className="block text-sm font-medium text-github-text-primary mb-2">
-                    Color Vision
+                    {t('settingsModal.colorVision')}
                   </label>
                   <div className="flex gap-2">
                     {COLOR_VISION_MODES.map((mode) => {
@@ -302,7 +301,9 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                               : 'bg-github-bg-tertiary text-github-text-secondary border-github-border hover:text-github-text-primary'
                           }`}
                         >
-                          {mode.label}
+                          {mode.label === 'Normal'
+                            ? t('settingsModal.colorVisionNormal')
+                            : t('settingsModal.colorVisionDeuteranopia')}
                         </button>
                       );
 
@@ -311,7 +312,15 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                       }
 
                       return (
-                        <Tooltip key={mode.id} content={mode.tooltip}>
+                        <Tooltip
+                          key={mode.id}
+                          content={
+                            mode.tooltip ===
+                            'Deuteranopia mode uses blue/orange instead of green/red for diffs.'
+                              ? t('settingsModal.colorVisionTooltip')
+                              : mode.tooltip
+                          }
+                        >
                           {button}
                         </Tooltip>
                       );
@@ -321,7 +330,37 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
 
                 <div>
                   <label className="block text-sm font-medium text-github-text-primary mb-2">
-                    Syntax Highlighting Theme
+                    Language / 语言
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setLanguage('en')}
+                      className={`px-3 py-2 text-sm rounded border transition-colors ${
+                        language === 'en'
+                          ? 'bg-github-accent text-white border-github-accent'
+                          : 'bg-github-bg-tertiary text-github-text-secondary border-github-border hover:text-github-text-primary'
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLanguage('zh')}
+                      className={`px-3 py-2 text-sm rounded border transition-colors ${
+                        language === 'zh'
+                          ? 'bg-github-accent text-white border-github-accent'
+                          : 'bg-github-bg-tertiary text-github-text-secondary border-github-border hover:text-github-text-primary'
+                      }`}
+                    >
+                      中文
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-github-text-primary mb-2">
+                    {t('settingsModal.syntaxTheme')}
                   </label>
                   <select
                     value={settings.syntaxTheme}
@@ -350,11 +389,10 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                     htmlFor="auto-viewed-patterns"
                     className="block text-sm font-medium text-github-text-primary mb-2"
                   >
-                    Auto-Mark Viewed Patterns
+                    {t('settingsModal.autoViewedPatterns')}
                   </label>
                   <p className="text-sm text-github-text-secondary mb-2">
-                    Files matching these glob patterns are marked as Viewed automatically. Enter one
-                    pattern per line.
+                    {t('settingsModal.autoViewedPatternsDesc')}
                   </p>
                   <textarea
                     id="auto-viewed-patterns"
@@ -368,14 +406,14 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                     }}
                     rows={6}
                     spellCheck={false}
-                    placeholder={'*.test.ts\n*.stories.tsx\nsrc/generated/**'}
+                    placeholder={t('settingsModal.autoViewedPatternsPlaceholder')}
                     className="w-full p-3 bg-github-bg-tertiary border border-github-border rounded text-github-text-primary text-sm font-mono"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-github-text-primary mb-2">
-                    Open In Editor
+                    {t('settingsModal.openInEditor')}
                   </label>
                   <select
                     value={settings.editor.id}
@@ -416,7 +454,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                               htmlFor="editor-command"
                               className="block text-sm font-medium text-github-text-primary mb-1"
                             >
-                              Command
+                              {t('settingsModal.editorCommand')}
                             </label>
                             <input
                               id="editor-command"
@@ -434,7 +472,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                                   },
                                 })
                               }
-                              placeholder="e.g. mate"
+                              placeholder={t('settingsModal.editorCommandPlaceholder')}
                               spellCheck={false}
                               autoComplete="off"
                               className={`w-full p-2 bg-github-bg-secondary border rounded text-github-text-primary text-sm font-mono${
@@ -442,7 +480,9 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                               }${disabledClass}`}
                             />
                             {commandInvalid && (
-                              <p className="mt-1 text-xs text-red-400">Command is required.</p>
+                              <p className="mt-1 text-xs text-red-400">
+                                {t('settingsModal.editorCommandRequired')}
+                              </p>
                             )}
                           </div>
                           <div>
@@ -450,7 +490,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                               htmlFor="editor-args"
                               className="block text-sm font-medium text-github-text-primary mb-1"
                             >
-                              Arguments
+                              {t('settingsModal.editorArguments')}
                             </label>
                             <input
                               id="editor-args"
@@ -468,7 +508,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                                   },
                                 })
                               }
-                              placeholder="-l %line %file"
+                              placeholder={t('settingsModal.editorArgsPlaceholder')}
                               spellCheck={false}
                               autoComplete="off"
                               className={`w-full p-2 bg-github-bg-secondary border rounded text-github-text-primary text-sm font-mono${
@@ -476,12 +516,14 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
                               }${disabledClass}`}
                             />
                             {argsInvalid && (
-                              <p className="mt-1 text-xs text-red-400">Arguments are required.</p>
+                              <p className="mt-1 text-xs text-red-400">
+                                {t('settingsModal.editorArgsRequired')}
+                              </p>
                             )}
                             <p className="mt-2 text-xs text-github-text-secondary">
                               {isCustom
-                                ? 'Use %file and %line as placeholders. Wrap arguments containing spaces in single or double quotes. Arguments are passed directly to the command without a shell.'
-                                : 'Select Custom… above to edit these fields.'}
+                                ? t('settingsModal.editorCustomHelp')
+                                : t('settingsModal.editorPresetHelp')}
                             </p>
                           </div>
                         </div>
@@ -498,13 +540,15 @@ export function SettingsModal({ isOpen, onClose, settings, onSettingsChange }: S
             onClick={handleReset}
             className="px-3 py-2 text-sm text-github-text-secondary hover:text-github-text-primary"
           >
-            {activeSection === 'appearance' ? 'Reset Appearance Defaults' : 'Reset System Defaults'}
+            {activeSection === 'appearance'
+              ? t('settingsModal.resetAppearanceDefaults')
+              : t('settingsModal.resetSystemDefaults')}
           </button>
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm bg-github-accent text-white rounded hover:bg-green-600"
           >
-            Close
+            {t('settingsModal.close')}
           </button>
         </div>
       </div>
